@@ -28,4 +28,4 @@
 - [¿Qué es Azure Pipelines?](https://learn.microsoft.com/es-es/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)
 
 
-¡Explora, aprende y empodérate con PowerBIDays Málaga!
+¡Explora, aprende y comparte con la comunidad!
