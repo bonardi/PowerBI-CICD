@@ -13,6 +13,7 @@
 > **Nota:** Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
 
 
+
 ## Puntos Clave de la Presentación
 
 - Introducción a Power BI y sus capacidades.
