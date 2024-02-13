@@ -6,6 +6,8 @@
 
 ## Contenido
 
+Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
+
 - **Presentación**: Revisa de nuevo la ppt presentada en la charla.
 
 - **Pipelines**: Revisa y prueba el código utilizado en las pipelines presentadas.

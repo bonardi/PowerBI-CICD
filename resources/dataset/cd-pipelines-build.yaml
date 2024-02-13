@@ -1,0 +1,66 @@
+# ███╗   ███╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+# ████╗ ████║██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+# ██╔████╔██║███████║██████╔╝██████╔╝█████╗  ██║
+# ██║╚██╔╝██║██╔══██║██╔══██╗██╔══██╗██╔══╝  ██║
+# ██║ ╚═╝ ██║██║  ██║██║  ██║██████╔╝███████╗███████╗
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝
+
+trigger:
+- main
+
+parameters:
+- name: refreshDataset
+  displayName: 'Refresh Dataset'
+  type: boolean
+  default: true
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solutionName: 'src'
+  tabularEditorUrl: 'https://cdn.tabulareditor.com/files/TabularEditor.2.18.1.zip'
+  bimFileName: 'PowerBiDaysMalaga.bim'
+  bimFilePath: '$(System.DefaultWorkingDirectory)\$(solutionName)\bim\$(bimFileName)'
+  workspaceNamePBI: 'PowerBiDaysMalaga'
+  dataSourcePBI: 'powerbi://api.powerbi.com/v1.0/myorg/$(workspaceNamePBI)'
+  srvEndpointPowerBIAzure: 'SVC_ADO_PowerBI'
+  srvEndpointPowerBIADO: 'ADO_SPN_PowerBI'
+  datasetPowerBI: 'PBIDaysMalaga'
+  datasetId: '30b409b7-e40b-4950-9d37-7ed810f3ed96'
+
+
+steps:  
+- task: PowerShell@2
+  displayName: 'Download & Install - Tabular Editor'
+  inputs:
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      Invoke-WebRequest -Uri $(tabularEditorUrl) -OutFile TabularEditor.zip
+      Expand-Archive -Path "$(System.DefaultWorkingDirectory)/TabularEditor.zip" -DestinationPath "$(System.DefaultWorkingDirectory)"
+
+- task: AzureCLI@2
+  displayName: 'Deployment Tabular Model'
+  inputs:
+    azureSubscription: '$(srvEndpointPowerBIAzure)'
+    scriptType: 'batch'
+    scriptLocation: 'inlineScript'
+    inlineScript: '.\TabularEditor.exe "$(bimFilePath)" -D "Data Source=$(dataSourcePBI);User ID=app:%servicePrincipalId%@%tenantId%;Password=%servicePrincipalKey%;" "$(datasetPowerBI)" -O -C -P -R -M -E -V'
+    addSpnToEnvironment: true
+
+- task: PowerBIActions@5 
+  condition: and(succeeded(), eq(${{parameters.refreshDataset}}, true))
+  displayName: 'Refresh Dataset'
+  inputs:
+    PowerBIServiceEndpoint: '$(srvEndpointPowerBIADO)'
+    Action: 'DataRefresh'
+    WorkspaceName: '$(workspaceNamePBI)'
+    DatasetName: '$(datasetPowerBI)'
+
+- task: PostBuildCleanup@3
+  condition: always()
+  displayName: 'Clean Agent Directories'
+  inputs:
+    disableCertCheck: true
