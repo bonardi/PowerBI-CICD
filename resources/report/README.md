@@ -1,4 +1,4 @@
-# README del Proyecto
+# PowerBIDaysMalaga2024 - report
 
 Este proyecto contiene tres pipelines que automatizan tareas relacionadas con el manejo y análisis de archivos PBIX en Power BI utilizando diferentes herramientas y enfoques.
 

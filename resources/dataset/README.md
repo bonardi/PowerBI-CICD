@@ -1,4 +1,4 @@
-# PowerBIDaysMalaga2024
+# PowerBIDaysMalaga2024 - dataset
 
 Este proyecto consta de dos pipelines destinadas a automatizar tareas relacionadas con la gestión y análisis de modelos de inteligencia empresarial (BIM) en Power BI utilizando la herramienta Tabular Editor y Azure DevOps.
 
