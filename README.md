@@ -12,8 +12,6 @@ Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
 
 - **Pipelines**: Revisa y prueba el código utilizado en las pipelines presentadas.
 
-> **Nota:** Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
-
 
 ## Puntos Clave de la Presentación
 
