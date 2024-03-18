@@ -1,4 +1,4 @@
-# PowerBIDaysMalaga2024 - report
+# PowerBI&CICD - report
 
 Este proyecto contiene tres pipelines que automatizan tareas relacionadas con el manejo y análisis de archivos PBIX en Power BI utilizando diferentes herramientas y enfoques.
 
@@ -26,4 +26,4 @@ Esta pipeline extrae la información de un informe PBIX y la actualiza en un rep
 ### Configuración
 - **Desencadenador:** Se activa en cada confirmación en una rama diferente a "main".
 - **Parámetros:**
-  - **cleanDirectory:** Indica si se debe limpiar el directorio antes de la extracción. Por defecto, se establece en "true".
+- **cleanDirectory:** Indica si se debe limpiar el directorio antes de la extracción. Por defecto, se establece en "true".
