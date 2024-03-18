@@ -1,14 +1,12 @@
-# PowerBIDaysMalaga2024
+# PowerBI&CICD
 
-¡Bienvenido al repositorio de archivos presentados en la charla **Azure DevOps para tus desarollos en PowerBI en PowerBIDays Málaga 2024!** Encuentras aquí los principales recursos de nuestra charla, incluyendo la presentación principal.
+¡Bienvenido al repositorio de archivos presentados en la charla **Azure DevOps para tus desarollos en PowerBI&CICD** Encuentras aquí los principales recursos de nuestra charla, incluyendo la presentación principal.
 
 ![Intro](.documentation/img/Intro.png)
 
 ## Contenido
 
 Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
-
-- **Presentación**: Revisa de nuevo la ppt presentada en la charla.
 
 - **Pipelines**: Revisa y prueba el código utilizado en las pipelines presentadas.
 
