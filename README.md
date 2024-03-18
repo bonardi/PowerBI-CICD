@@ -2,7 +2,7 @@
 
 ¡Bienvenido al repositorio de archivos presentados en la charla **Azure DevOps para tus desarollos en PowerBI&CICD** Encuentras aquí los principales recursos de nuestra charla, incluyendo la presentación principal.
 
-![Intro](.documentation/img/Intro.png)
+![Intro](.documentation/img/logo.jpg)
 
 ## Contenido
 
@@ -10,11 +10,9 @@ Los recursos los podrás encontrar dentro de la carpeta **"resources"**.
 
 - **Pipelines**: Revisa y prueba el código utilizado en las pipelines presentadas.
 
+## Blog
 
-## Puntos Clave de la Presentación
-
-- Introducción a Power BI y sus capacidades.
-- Mejores prácticas para la creación de informes y visualizaciones.
+- [Medium](https://medium.com/@akanemar)
 
 ## Links de Información Adicional
 
