@@ -1,8 +1,9 @@
 # exclude everything report
-resources/report/*
+
+
 # exception to the rule
-!resources/report/README.md
-!resources/report/ci-pipelines-unzip-cloudAgent.yaml
+
+
 
 
 # exclude everything dataset

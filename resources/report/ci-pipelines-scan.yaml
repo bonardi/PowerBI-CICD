@@ -1,0 +1,86 @@
+# ███╗   ███╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+# ████╗ ████║██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+# ██╔████╔██║███████║██████╔╝██████╔╝█████╗  ██║
+# ██║╚██╔╝██║██╔══██║██╔══██╗██╔══██╗██╔══╝  ██║
+# ██║ ╚═╝ ██║██║  ██║██║  ██║██████╔╝███████╗███████╗
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝
+
+
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solutionName: 'src'
+  pbiInspectorCliUrl: 'https://github.com/NatVanG/PBI-Inspector/releases/download/v1.9.4/win-x64-CLI.zip'
+  pbiFileName: 'PBIDaysMalagaReport.pbix'
+  pbiInspectorCliPath: '$(System.DefaultWorkingDirectory)\pbi-inspector\cli'
+  pbiInspectorCliPathExe: '$(System.DefaultWorkingDirectory)\pbi-inspector\cli\PBIXInspectorCLI.exe'
+  pbiFilePath: '$(System.DefaultWorkingDirectory)\$(solutionName)\pbix\$(pbiFileName)'
+  bpaRulesPath: '$(System.DefaultWorkingDirectory)\pipelines\config\bparules2.json'
+  toolPath: '$(Build.SourcesDirectory)\_Tools\PBIInspector\win-x64\CLI'
+  toolPath2: '$(Build.SourcesDirectory)\_Tools\PBIInspector\win-x64\CLI\win-x64\CLI'  
+  tempPath: '$(Build.SourcesDirectory)\_temp'  
+
+steps:  
+- task: PowerShell@2
+  displayName: 'Download PBIXInspector'
+  inputs:
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    pwsh: true    
+    targetType: inline
+    script: |
+      New-Item -ItemType Directory -Path "$(tempPath)" -ErrorAction SilentlyContinue | Out-Null
+
+      Write-Host "##[debug]Downloading PBI Inspector"
+      $downloadUrl = "https://github.com/NatVanG/PBI-Inspector/releases/latest/download/win-x64-CLI.zip" 
+      $zipFile = "$(tempPath)\PBIXInspector.zip"
+      Invoke-WebRequest -Uri $downloadUrl -OutFile $zipFile
+      Expand-Archive -Path $zipFile -DestinationPath "$(toolPath)" -Force                            
+
+      Write-Host "##[debug]Downloading Report default rules"
+      $downloadUrl = "https://raw.githubusercontent.com/NatVanG/PBI-Inspector/main/Rules/Base-rules.json"
+      Invoke-WebRequest -Uri $downloadUrl -OutFile "$(tempPath)\Rules-Report.json"
+
+- task: PowerShell@2
+  displayName: 'PBI-InspectorCli - Genereate Report'
+  enabled: true
+  inputs:
+    workingDirectory: '$(toolPath2)'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      Write-Host "Create BPARules report"
+      .\PBIXInspectorCLI.exe -pbix "$(pbiFilePath)" -rules "$(bpaRulesPath)" -output "report" -formats "CONSOLE,HTML"
+
+- task: PowerShell@2
+  displayName: 'PBI-InspectorCli - Show Report'
+  enabled: true
+  inputs:
+    workingDirectory: '$(toolPath2)'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      Write-Host "Running BPARules rules"
+      .\PBIXInspectorCLI.exe -pbix "$(pbiFilePath)" -rules "$(bpaRulesPath)" -formats "ADO"
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Upload Report'
+  condition: succeededOrFailed()
+  inputs:
+    targetPath: '$(toolPath2)\report\TestRun.html'
+    artifact: 'BPARules-Report'
+    publishLocation: 'pipeline'
+     
+- task: PublishHtmlReport@1
+  condition: succeededOrFailed()
+  displayName: 'Publish HTML Report'
+  inputs:
+    reportDir: '$(toolPath2)\report\TestRun.html'
+
+- task: PostBuildCleanup@3
+  displayName: 'Clean Agent Directories'
+  condition: always()
+  inputs:
+    disableCertCheck: true
