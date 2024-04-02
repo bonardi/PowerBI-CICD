@@ -1,0 +1,51 @@
+# ███╗   ███╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+# ████╗ ████║██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+# ██╔████╔██║███████║██████╔╝██████╔╝█████╗  ██║
+# ██║╚██╔╝██║██╔══██║██╔══██╗██╔══██╗██╔══╝  ██║
+# ██║ ╚═╝ ██║██║  ██║██║  ██║██████╔╝███████╗███████╗
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝
+
+trigger:
+- main
+
+
+pool: 'windows-latest'
+
+variables:
+- name: solutionName
+  value: 'src'
+- name: workingDirectory
+  value: '$(System.DefaultWorkingDirectory)'
+- name: filePowerBiPath
+  value: '$(workingDirectory)\$(solutionName)\pbix'
+- name: filePowerBiName
+  value: 'PBIDaysMalagaReport.pbix'
+- name: filePowerBi
+  value: '$(filePowerBiPath)\$(filePowerBiName)'
+- name: workspaceNamePBI
+  value: 'PowerBiDaysMalaga'
+- name: srvEndpointPowerBI
+  value: 'ADO_SPN_PowerBI'
+
+steps:
+
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - task: PowerBIActions@5
+    displayName: 'Publish PowerBi File Report'
+    inputs:
+      PowerBIServiceEndpoint: '$(srvEndpointPowerBI)'
+      Action: 'Publish'
+      SkipReport: false
+      Create: true
+      Overwrite: true
+      WorkspaceName: '$(workspaceNamePBI)'
+      PowerBIPath: '$(filePowerBi)'
+
+  - task: PostBuildCleanup@3
+    displayName: 'Clean Agent Directories'
+    condition: always()
+    inputs:
+      disableCertCheck: true
