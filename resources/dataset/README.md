@@ -13,7 +13,7 @@ Esta pipeline utiliza TabularEditor para analizar el dataset en busca de posible
 ## Pipeline 2: cd-deployment
 
 ### Descripción
-Esta pipeline actualiza nuestro dataset en el servicio de Power BI. Descarga la herramienta TabularEditor para subir nuestro dataset al servicio y 
+Esta pipeline actualiza nuestro dataset en el servicio de Power BI. Descarga la herramienta TabularEditor para subir nuestro dataset al servicio y utiliza PowerBIActions para realizar el refresco.
 
 ### Configuración
 - **Desencadenador:** Se activa en cada confirmación en la rama "main".
