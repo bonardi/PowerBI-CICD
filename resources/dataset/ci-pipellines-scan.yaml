@@ -1,0 +1,56 @@
+# ███╗   ███╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+# ████╗ ████║██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+# ██╔████╔██║███████║██████╔╝██████╔╝█████╗  ██║
+# ██║╚██╔╝██║██╔══██║██╔══██╗██╔══██╗██╔══╝  ██║
+# ██║ ╚═╝ ██║██║  ██║██║  ██║██████╔╝███████╗███████╗
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝
+
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solutionName: 'src'
+  tabularEditorUrl: 'https://cdn.tabulareditor.com/files/TabularEditor.2.18.1.zip'
+  bimFileName: 'DragonBall.bim'
+  bimFilePath: '$(System.DefaultWorkingDirectory)\$(solutionName)\bim\$(bimFileName)'
+  bpaRulesPath: '$(System.DefaultWorkingDirectory)\pipelines\config\BPARules.json'
+
+steps:  
+- task: PowerShell@2
+  displayName: 'Download & Install - Tabular Editor'
+  inputs:
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      Invoke-WebRequest -Uri $(tabularEditorUrl) -OutFile TabularEditor.zip
+      Expand-Archive -Path "$(System.DefaultWorkingDirectory)/TabularEditor.zip" -DestinationPath "$(System.DefaultWorkingDirectory)"
+
+- task: PowerShell@2
+  displayName: 'Best Practice Analyze - Tabular Editor'
+  inputs:
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    pwsh: true
+    targetType: 'inline'
+    script: |
+      $p = Start-Process -filePath TabularEditor.exe -Wait -NoNewWindow -PassThru `
+       -argumentList "`"$(bimFilePath)`" -A `"$(bpaRulesPath)`" -O -C -P -V -E -W -T report.xml"     
+      exit $p.ExitCode
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Upload Report'
+  condition: succeededOrFailed()
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)\report.xml'
+    artifact: 'BPARules-Report'
+    publishLocation: 'pipeline'
+
+- task: PublishTestResults@2
+  displayName: 'Publish Report'
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '$(System.DefaultWorkingDirectory)\report.xml'
+    failTaskOnFailedTests: true
