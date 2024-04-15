@@ -27,7 +27,6 @@ variables:
   srvEndpointPowerBIAzure: 'SVC_ADO_PowerBI'
   srvEndpointPowerBIADO: 'ADO_SPN_PowerBI'
   datasetPowerBI: 'DragonBall'
-  datasetId: '4fa64aaa-e67f-439d-ae5c-ca3ed793bf35'
 
 
 steps:  
